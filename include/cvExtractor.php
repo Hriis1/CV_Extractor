@@ -1,8 +1,37 @@
 <?php
-function extractTextFromDocx($filePath) {
+//require_once 'HTTP/Request2.php';
+
+function extractTextFromDocx($filePath)
+{
+    $curl = curl_init();
+
+    curl_setopt_array($curl, array(
+        CURLOPT_URL => 'https://converter.portal.ayfie.com/api/converter/1/FileConverter/Convert',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'POST',
+        CURLOPT_POSTFIELDS => array('file' => new CURLFILE('/C:/Apps/xampp/htdocs/insoft/CV_Extractor/CVs/CVNencho.docx')),
+        CURLOPT_HTTPHEADER => array(
+            'X-API-KEY: tRZEvaZOSdFGKqAjJkHGxPTBiHfHquHsYFaPLcYVPvweZPQXho'
+        ),
+    )
+    );
+
+    $response = curl_exec($curl);
+
+    curl_close($curl);
+    echo $response;
+}
+function extractTextFromDocxOld($filePath)
+{
     // Ensure the file exists
     if (!file_exists($filePath)) {
-        return "File does not exist.";
+        echo "File does not exist.";
+        return false;
     }
 
     // Convert the file path to UTF-8 if it is not already
@@ -25,7 +54,7 @@ function extractTextFromDocx($filePath) {
 
             // Extract the text content from the XML
             $text = $dom->textContent;
-            
+
             /* foreach ($dom->getElementsByTagName('w:t') as $element) {
                 $text .= $element->nodeValue;
             } */
@@ -33,11 +62,71 @@ function extractTextFromDocx($filePath) {
             return $text;
         } else {
             $zip->close();
-            return "document.xml not found in the .docx file.";
+            echo "document.xml not found in the .docx file.";
+            return false;
         }
     } else {
-        return "Unable to open the .docx file.";
+        echo "Unable to open the .docx file.";
+        return false;
     }
+}
+
+function extactCVDataFromDocxOld($filePath)
+{
+    $text = extractTextFromDocxOld($filePath);
+
+    if ($text) {
+        $cvData = [
+            'personal_information' => '',
+            'skills' => '',
+            'experience' => '',
+            'education' => '',
+            'additional_qualifications' => ''
+        ];
+
+        // Use regular expressions to find and split sections
+        $sectionHeaders = ['Умения', 'Лична информация', 'Опит', 'Образование', 'Допълнителни квалификации'];
+        $regexPattern = '/\s*(' . implode('|', $sectionHeaders) . ')\s*[:\n]/u';
+
+        // Split the text into sections based on the pattern
+        $sections = preg_split($regexPattern, $text, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+
+        // Iterate over the sections and organize them into the result array
+        $currentSection = null;
+        for ($i = 0; $i < count($sections); $i++) {
+            $part = trim($sections[$i]);
+            if (in_array($part, $sectionHeaders)) {
+                $currentSection = $part;
+            } else {
+                switch ($currentSection) {
+                    case 'Умения':
+                        $cvData['skills'] .= $part . "\n";
+                        break;
+                    case 'Лична информация':
+                        $cvData['personal_information'] .= $part . "\n";
+                        break;
+                    case 'Опит':
+                        $cvData['experience'] .= $part . "\n";
+                        break;
+                    case 'Образование':
+                        $cvData['education'] .= $part . "\n";
+                        break;
+                    case 'Допълнителни квалификации':
+                        $cvData['additional_qualifications'] .= $part . "\n";
+                        break;
+                }
+            }
+        }
+
+        // Trim any extra whitespace from the sections
+        foreach ($cvData as $key => $value) {
+            $cvData[$key] = trim($value);
+        }
+
+        return $cvData;
+    }
+
+    return "Unable to extract data from cv";
 }
 
 

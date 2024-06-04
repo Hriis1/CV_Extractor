@@ -24,10 +24,11 @@ function extractTextFromDocx($filePath) {
             $dom->loadXML($data);
 
             // Extract the text content from the XML
-            $text = '';
-            foreach ($dom->getElementsByTagName('w:t') as $element) {
+            $text = $dom->textContent;
+            
+            /* foreach ($dom->getElementsByTagName('w:t') as $element) {
                 $text .= $element->nodeValue;
-            }
+            } */
 
             return $text;
         } else {
@@ -39,7 +40,4 @@ function extractTextFromDocx($filePath) {
     }
 }
 
-// Example usage:
-$filePath = '../CVs/CVНенчоАДюлгеров.docx';
-$text = extractTextFromDocx($filePath);
-echo $text;
+

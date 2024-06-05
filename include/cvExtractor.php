@@ -76,11 +76,11 @@ function parseCVArrText($cvArrText)
             case 'име':
             case 'имена':
                 if ($currSection) {
-                    $cvData[$currSection] += $currTrimmed + ' ';
+                    $cvData[$currSection] .= $currTrimmed . ' ';
                 }
                 for ($j = $i + 1; $j < 4; $j++) {
                     if (isHumanName(trim($cvArrText[$j]))) {
-                        $cvData['names'] += trim($cvArrText[$j]) + ' ';
+                        $cvData['names'] .= trim($cvArrText[$j]) . ' ';
                     }
                 }
                 break;
@@ -88,7 +88,7 @@ function parseCVArrText($cvArrText)
             case 'e-mail':
             case 'имейл':
                 if ($currSection) {
-                    $cvData[$currSection] += $currTrimmed + ' ';
+                    $cvData[$currSection] .= $currTrimmed . ' ';
                 }
                 for ($j = $i + 1; $j < 6; $j++) {
                     $potEmail = trim($cvArrText[$j]);
@@ -101,7 +101,7 @@ function parseCVArrText($cvArrText)
             case 'телефон':
             case 'телефонен номер':
                 if ($currSection) {
-                    $cvData[$currSection] += $currTrimmed + ' ';
+                    $cvData[$currSection] .= $currTrimmed . ' ';
                 }
                 for ($j = $i + 1; $j < 6; $j++) {
                     $potPhone = trim($cvArrText[$j]);
@@ -113,13 +113,13 @@ function parseCVArrText($cvArrText)
                 break;
             default:
                 if ($currSection) {
-                    $cvData[$currSection] += $currTrimmed + ' ';
+                    $cvData[$currSection] .= $currTrimmed . ' ';
                 }
                 break;
         }
     }
-
-    return $cvData;
+    echo json_encode($cvData);
+    //return $cvData;
 }
 function extractTextFromDocxOld($filePath)
 {

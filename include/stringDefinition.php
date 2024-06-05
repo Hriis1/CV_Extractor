@@ -34,6 +34,10 @@ function isValidPhoneNumber($phone) {
 }
 
 function isValidAddress($string) {
+
+    if(strlen($string) >= 50) {
+        return false;
+    }
     // Define common patterns that could indicate an address
     $addressPatterns = [
         '/(ул\.|ж\.к\.|гр\.|пл\.|бул\.|обл\.|общ\.)/u', // Common address abbreviations in Bulgarian (e.g., ул., ж.к., гр., пл., бул., обл., общ.)

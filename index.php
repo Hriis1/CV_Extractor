@@ -6,7 +6,7 @@
     <title>Upload and Extract Text</title>
 </head>
 <body>
-    <form action="include/upload.php" method="post" enctype="multipart/form-data">
+    <form action="include/parseCV.php" method="post" enctype="multipart/form-data">
         <input type="file" name="file" id="fileInput" required>
         <button type="submit">Upload and Extract Text</button>
     </form>

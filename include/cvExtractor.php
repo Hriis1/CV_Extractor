@@ -1,30 +1,38 @@
 <?php
 //require_once 'HTTP/Request2.php';
 
-function extractTextFromDocx($filePath)
+function extractTextArrFromDocx($filePath, $fileName)
 {
+    $apiKey = 'tRZEvaZOSdFGKqAjJkHGxPTBiHfHquHsYFaPLcYVPvweZPQXho';
+    $url = 'https://converter.portal.ayfie.com/api/converter/1/FileConverter/Convert';
+
     $curl = curl_init();
 
-    curl_setopt_array($curl, array(
-        CURLOPT_URL => 'https://converter.portal.ayfie.com/api/converter/1/FileConverter/Convert',
+    $file = new CURLFile($filePath, mime_content_type($filePath), $fileName);
+    $postFields = ['file' => $file];
+
+    curl_setopt_array($curl, [
+        CURLOPT_URL => $url,
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => '',
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 0,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => 'POST',
-        CURLOPT_POSTFIELDS => array('file' => new CURLFILE('/C:/Apps/xampp/htdocs/insoft/CV_Extractor/CVs/CVNencho.docx')),
-        CURLOPT_HTTPHEADER => array(
-            'X-API-KEY: tRZEvaZOSdFGKqAjJkHGxPTBiHfHquHsYFaPLcYVPvweZPQXho'
-        ),
-    )
-    );
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => $postFields,
+        CURLOPT_HTTPHEADER => [
+            "X-API-KEY: $apiKey",
+            "Content-Type: multipart/form-data"
+        ]
+    ]);
 
     $response = curl_exec($curl);
+    $err = curl_error($curl);
 
     curl_close($curl);
-    echo $response;
+
+    if ($err) {
+        return "cURL Error #:" . $err;
+    } else {
+        $responseArray = json_decode($response, true);
+        return $responseArray['text'];
+    }
 }
 function extractTextFromDocxOld($filePath)
 {

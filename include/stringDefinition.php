@@ -1,4 +1,26 @@
 <?php
+
+function is_word_wiktionary($word, $lang) {
+    //word to lower case
+    $word = mb_strtolower($word, 'UTF-8');
+    // Construct the URL for the Wiktionary API
+    $url = "https://$lang.wiktionary.org/w/api.php?action=query&titles=" . urlencode($word) . "&prop=extracts&explaintext&format=json&exintro&redirects=1";
+
+    // Use file_get_contents to send the GET request
+    $response = file_get_contents($url);
+
+    // Decode the JSON response
+    $data = json_decode($response, true);
+
+    // Check if the response contains the 'extract' field
+    if (isset($data['query']['pages'])) {
+        $pages = $data['query']['pages'];
+        $page = reset($pages); // Get the first element of the pages array
+        return isset($page['extract']);
+    }
+
+    return false;
+}
 function isHumanName($string)
 {
     // Define common patterns that could indicate a human name
@@ -57,4 +79,10 @@ function isValidAddress($string) {
         }
     }
     return false;
+}
+
+if(is_word_wiktionary('Умения', 'bg')) {
+    echo 'dadadada';
+} else {
+    echo 'nenenene';
 }

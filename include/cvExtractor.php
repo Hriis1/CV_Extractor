@@ -66,12 +66,16 @@ function parseCVArrText($cvArrText)
                 $currSection = 'personal_information';
                 break;
             case 'умения':
+            case 'лични умения':
+            case 'лични умения и компетенции':
                 $currSection = 'skills';
                 break;
             case 'опит':
+            case 'трудов стаж':
                 $currSection = 'experience';
                 break;
             case 'образование':
+            case 'образование и обучение':
                 $currSection = 'education';
                 break;
             case 'допълнителни квалификации':

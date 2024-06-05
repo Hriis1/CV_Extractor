@@ -5,7 +5,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $filePath = $_FILES['file']['tmp_name'];
         $fileName = $_FILES['file']['name'];
 
-        $responseArr = extractTextArrFromDocx($filePath, $fileName);
+        $responseArr = extractTextArrDoc($filePath, $fileName);
         //print_r($responseArr);
         parseCVArrText($responseArr);
 

@@ -1,7 +1,7 @@
 <?php
 require_once 'stringDefinition.php';
 
-function extractTextArrFromDocx($filePath, $fileName)
+function extractTextArrDoc($filePath, $fileName)
 {
     $apiKey = 'tRZEvaZOSdFGKqAjJkHGxPTBiHfHquHsYFaPLcYVPvweZPQXho';
     $url = 'https://converter.portal.ayfie.com/api/converter/1/FileConverter/Convert';
@@ -122,7 +122,7 @@ function parseCVArrText($cvArrText)
                 if ($currSection) {
                     $cvData[$currSection] .= $currTrimmed . ' ';
                 }
-                for ($j = $i + 1; $j < $i + 5; $j++) {
+                for ($j = $i + 1; $j < $i + 7; $j++) {
                     $potAddress = trim($cvArrText[$j]);
                     if (isValidAddress($potAddress)) {
                         $cvData['residence'] = $potAddress;

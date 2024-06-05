@@ -11,13 +11,24 @@ function isHumanName($string)
     // Check if the string matches any of the name patterns
     foreach ($namePatterns as $pattern) {
         if (preg_match($pattern, $string)) {
-            return 'true';
+            return true;
         }
     }
 
-    return 'false';
+    return false;
 }
 
 function isValidEmail($email) {
     return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
+}
+
+function isValidPhoneNumber($phone) {
+    // Remove spaces, dashes, and parentheses from the phone number
+    $normalizedPhone = preg_replace('/[\s\-()]+/', '', $phone);
+    
+    // Define a regular expression pattern for phone numbers
+    $pattern = '/^(\+359|0)?8[7-9][0-9]{7}$/';
+
+    // Check if the normalized phone number matches the pattern
+    return preg_match($pattern, $normalizedPhone) === 1;
 }

@@ -92,8 +92,21 @@ function parseCVArrText($cvArrText)
                 }
                 for ($j = $i + 1; $j < 6; $j++) {
                     $potEmail = trim($cvArrText[$j]);
-                    if(isValidEmail($potEmail)) {
+                    if (isValidEmail($potEmail)) {
                         $cvData['email'] = $potEmail;
+                        break;
+                    }
+                }
+                break;
+            case 'телефон':
+            case 'телефонен номер':
+                if ($currSection) {
+                    $cvData[$currSection] += $currTrimmed + ' ';
+                }
+                for ($j = $i + 1; $j < 6; $j++) {
+                    $potPhone = trim($cvArrText[$j]);
+                    if (isValidPhoneNumber($potPhone)) {
+                        $cvData['phone_num'] = $potPhone;
                         break;
                     }
                 }
@@ -105,6 +118,8 @@ function parseCVArrText($cvArrText)
                 break;
         }
     }
+
+    return $cvData;
 }
 function extractTextFromDocxOld($filePath)
 {

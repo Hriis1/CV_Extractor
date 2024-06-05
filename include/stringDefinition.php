@@ -23,6 +23,20 @@ function is_word_wiktionary($word, $lang) {
 }
 function isHumanName($string)
 {
+    $wordToLower = mb_strtolower($string, 'UTF-8');
+    //if its a word its not a name
+    if(is_word_wiktionary($string, 'bg')) {
+        return false;
+    }
+    $additionalWords = [
+        'телефон', 'телефони'
+    ];
+
+    //if its in the additional words
+    if(in_array($wordToLower, $additionalWords)) {
+        return false;
+    }
+    
     // Define common patterns that could indicate a human name
     // Including common endings for names and surnames in Cyrillic and Latin scripts
     $namePatterns = [
@@ -79,10 +93,4 @@ function isValidAddress($string) {
         }
     }
     return false;
-}
-
-if(is_word_wiktionary('Умения', 'bg')) {
-    echo 'dadadada';
-} else {
-    echo 'nenenene';
 }

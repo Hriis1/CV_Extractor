@@ -91,7 +91,11 @@ function parseCVArrText($cvArrText)
                     $cvData[$currSection] += $currTrimmed + ' ';
                 }
                 for ($j = $i + 1; $j < 6; $j++) {
-
+                    $potEmail = trim($cvArrText[$j]);
+                    if(isValidEmail($potEmail)) {
+                        $cvData['email'] = $potEmail;
+                        break;
+                    }
                 }
                 break;
             default:

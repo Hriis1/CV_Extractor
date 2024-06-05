@@ -117,6 +117,8 @@ function parseCVArrText($cvArrText)
                 }
                 break;
             case 'местожителство':
+            case 'адрес':
+            case 'място на живеене':
                 if ($currSection) {
                     $cvData[$currSection] .= $currTrimmed . ' ';
                 }

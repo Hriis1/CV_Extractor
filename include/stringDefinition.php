@@ -32,3 +32,25 @@ function isValidPhoneNumber($phone) {
     // Check if the normalized phone number matches the pattern
     return preg_match($pattern, $normalizedPhone) === 1;
 }
+
+function isValidAddress($string) {
+    // Define common patterns that could indicate an address
+    $addressPatterns = [
+        '/(ул\.|ж\.к\.|гр\.|пл\.|бул\.|обл\.|общ\.)/u', // Common address abbreviations in Bulgarian (e.g., ул., ж.к., гр., пл., бул., обл., общ.)
+        '/\b(street|st\.|avenue|ave\.|road|rd\.|city|town|zip|postal|code|place|plaza)\b/i', // Common address terms in English
+        '/\b[0-9]{3,5}\b/', // Postal codes (typically 3 to 5 digits)
+        '/\b\d{1,4}[A-Za-z]?\b/', // House numbers (e.g., 523A)
+    ];
+
+    // Normalize the string to remove unnecessary spaces
+    $normalizedString = trim(preg_replace('/\s+/', ' ', $string));
+
+
+    // Check if the string matches any of the address patterns
+    foreach ($addressPatterns as $pattern) {
+        if (preg_match($pattern, $normalizedString)) {
+            return true;
+        }
+    }
+    return false;
+}

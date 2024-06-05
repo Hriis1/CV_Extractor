@@ -45,7 +45,8 @@ function parseCVArrText($cvArrText)
         'additional_info' => '',
         'names' => '',
         'email' => '',
-        'phone_num' => ''
+        'phone_num' => '',
+        'residence' => ''
     ];
 
     $currSection = '';
@@ -112,6 +113,17 @@ function parseCVArrText($cvArrText)
                     if (isValidPhoneNumber($potPhone)) {
                         $cvData['phone_num'] = $potPhone;
                         break;
+                    }
+                }
+                break;
+            case 'местожителство':
+                if ($currSection) {
+                    $cvData[$currSection] .= $currTrimmed . ' ';
+                }
+                for ($j = $i + 1; $j < $i + 5; $j++) {
+                    $potAddress = trim($cvArrText[$j]);
+                    if (isValidAddress($potAddress)) {
+                        $cvData['residence'] = $potAddress;
                     }
                 }
                 break;

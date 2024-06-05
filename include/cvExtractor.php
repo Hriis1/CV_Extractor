@@ -1,5 +1,23 @@
 <?php
-//require_once 'HTTP/Request2.php';
+
+function isHumanName($string)
+{
+    // Define common patterns that could indicate a human name
+    // Including common endings for names and surnames in Cyrillic and Latin scripts
+    $namePatterns = [
+        '/^[А-ЯЁ][а-яё]+(?:[ \-][А-ЯЁ][а-яё]+)*$/u', // Cyrillic names (e.g., Атанас, Атанасов, Атанас Атанасов)
+        '/^[A-Z][a-z]+(?:[ \-][A-Z][a-z]+)*$/',      // Latin names (e.g., John, Smith, John Smith)
+    ];
+
+    // Check if the string matches any of the name patterns
+    foreach ($namePatterns as $pattern) {
+        if (preg_match($pattern, $string)) {
+            return 'true';
+        }
+    }
+
+    return 'false';
+}
 
 function extractTextArrFromDocx($filePath, $fileName)
 {
@@ -32,6 +50,71 @@ function extractTextArrFromDocx($filePath, $fileName)
     } else {
         $responseArray = json_decode($response, true);
         return $responseArray['text'];
+    }
+}
+
+function parseCVArrText($cvArrText)
+{
+    $cvData = [
+        'personal_information' => '',
+        'skills' => '',
+        'experience' => '',
+        'education' => '',
+        'additional_info' => '',
+        'names' => '',
+        'email' => '',
+        'phone_num' => ''
+    ];
+
+    $currSection = '';
+
+    for ($i = 0; $i < sizeof($cvArrText); $i++) {
+        $currEl = $cvArrText[$i];
+        $currTrimmed = trim($currEl);
+        $currTrimmedToLower = mb_strtolower($currTrimmed, 'UTF-8');
+
+        switch ($currTrimmedToLower) {
+            case 'лична информация':
+            case 'personal info':
+                $currSection = 'personal_information';
+                break;
+            case 'умения':
+                $currSection = 'skills';
+                break;
+            case 'опит':
+                $currSection = 'education';
+                break;
+            case 'образование':
+                $currSection = 'education';
+                break;
+            case 'допълнителни квалификации':
+            case 'допълнителна информация':
+                $currSection = 'additional_info';
+                break;
+            case 'име':
+            case 'имена':
+                if ($currSection) {
+                    $cvData[$currSection] += $currTrimmed + ' ';
+                }
+                for ($j = $i + 1; $j < 4; $j++) {
+                    if (isHumanName(trim($cvArrText[$j]))) {
+                        $cvData['names'] += trim($cvArrText[$j]) + ' ';
+                    }
+                }
+                break;
+            case 'email':
+            case 'e-mail':
+            case 'имейл':
+                if ($currSection) {
+                    $cvData[$currSection] += $currTrimmed + ' ';
+                }
+                break;
+            default:
+                if ($currSection) {
+                    $cvData[$currSection] += $currTrimmed + ' ';
+                }
+                break;
+        }
     }
 }
 function extractTextFromDocxOld($filePath)
@@ -137,4 +220,4 @@ function extactCVDataFromDocxOld($filePath)
     return "Unable to extract data from cv";
 }
 
-
+echo isHumanName('Роден град');

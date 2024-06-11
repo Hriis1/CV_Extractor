@@ -217,9 +217,9 @@ function parseCVArrText($cvArrText, $deepSearch = false)
 
             //check for names if the names element is not set
             if (!$cvData['names']) {
-                if (isHumanName(trim($cvArrText[$i]))) {
+                $potName = trim($cvArrText[$i]);
+                if (isHumanName($potName)) {
                     //check for names while the next element is not a name
-                    $potName = trim($cvArrText[$i]);
                     while (isHumanName($potName)) {
                         $cvData['names'] .= $potName . ' ';
                         $i++;

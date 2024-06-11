@@ -217,7 +217,7 @@ function parseCVArrText($cvArrText, $deepSearch = false)
 
             //check for names if the names element is not set
             if (!$cvData['names']) {
-                $potName = trim($cvArrText[$i]);
+                $potName = $currTrimmed;
                 if (isHumanName($potName)) {
                     //check for names while the next element is not a name
                     while (isHumanName($potName)) {
@@ -230,14 +230,13 @@ function parseCVArrText($cvArrText, $deepSearch = false)
             }
 
             //check for email if the email element is not set
-            /* if(!$cvData['email']) {
-                $potEmail = trim($cvArrText[$i]);
-                if(isValidEmail($potEmail)) {
-                    $cvData['email'] = $potEmail;
+            if(!$cvData['email']) {
+                if(isValidEmail($currTrimmed)) {
+                    $cvData['email'] = $currTrimmed;
                     $i++;
                     continue;
                 }
-            } */
+            }
 
             //check for phone number if the phone element is not set
 

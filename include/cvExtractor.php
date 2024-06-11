@@ -152,6 +152,7 @@ function parseCVArrText($cvArrText, $deepSearch = false)
                 break;
         }
     }
+
     if ($deepSearch) {
         //go over the first part of the cv again and write it as personal info if there is no personal info set
         if ($cvData['personal_information'] == '') {
@@ -190,6 +191,7 @@ function parseCVArrText($cvArrText, $deepSearch = false)
                         break;
                     default:
                         if ($currSection) {
+                            //Add to personal info
                             $cvData['personal_information'] .= $currTrimmed . ' ';
                         }
                         break;

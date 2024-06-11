@@ -1,5 +1,6 @@
 <?php
 require_once 'stringDefinition.php';
+require_once 'utils.php';
 
 function extractTextArrDoc($filePath, $fileName)
 {
@@ -56,8 +57,7 @@ function parseCVArrText($cvArrText, $deepSearch = false)
         $currEl = $cvArrText[$i];
 
         //trim the curr from special characters at beggining and end
-        $currTrimmed = preg_replace('/^[^\wА-Яа-я]+/u', '', $currEl);
-        $currTrimmed = preg_replace('/[^\wА-Яа-я]+$/u', '', $currTrimmed);
+        $currTrimmed = trimCharacters($currEl);
 
         $currTrimmedToLower = mb_strtolower($currTrimmed, 'UTF-8');
 
@@ -206,7 +206,7 @@ function parseCVArrText($cvArrText, $deepSearch = false)
 
         //check the whole cv again for names email and phone_num
         $i = 0;
-        while (!$cvData['names'] || $cvData['email'] /* || $cvData['phone_num'] */) {
+        while ($i < sizeof($cvArrText) && (!$cvData['names'] || $cvData['email']) /* || $cvData['phone_num'] */) {
 
             //Get the current element
             $currEl = $cvArrText[$i];

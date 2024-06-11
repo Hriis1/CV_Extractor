@@ -41,7 +41,7 @@ function extractTextArrDoc($filePath, $fileName)
     }
 }
 
-function parseCVArrText($cvArrText, $cvLang,$deepSearch = false)
+function parseCVArrText($cvArrText, $cvLang, $deepSearch = false)
 {
     $cvData = [
         'personal_information' => '',
@@ -68,29 +68,42 @@ function parseCVArrText($cvArrText, $cvLang,$deepSearch = false)
 
         switch ($currTrimmedToLower) {
             case 'лична информация':
+            case 'лични данни':
             case 'personal info':
+            case 'personal information':
                 $currSection = 'personal_information';
                 break;
             case 'умения':
             case 'лични умения':
             case 'лични умения и компетенции':
+            case 'skills':
+            case 'personal skills':
+            case 'personal skills and competences':
                 $currSection = 'skills';
                 break;
             case 'опит':
             case 'професионален опит':
             case 'трудов стаж':
+            case 'work experience':
+            case 'working experience':
                 $currSection = 'experience';
                 break;
             case 'образование':
             case 'образование и обучение':
+            case 'education':
+            case 'education and training':
                 $currSection = 'education';
                 break;
             case 'допълнителни квалификации':
             case 'допълнителна информация':
+            case 'additional info':
+            case 'additional information':
                 $currSection = 'additional_info';
                 break;
             case 'име':
             case 'имена':
+            case 'name':
+            case 'names':
                 if ($currSection) {
                     $cvData[$currSection] .= $currTrimmed . ' ';
                 }
@@ -101,13 +114,13 @@ function parseCVArrText($cvArrText, $cvLang,$deepSearch = false)
                     }
                 }
                 break;
+            case 'имейл':
             case 'email':
             case 'e-mail':
-            case 'имейл':
                 if ($currSection) {
                     $cvData[$currSection] .= $currTrimmed . ' ';
                 }
-                for ($j = $i + 1; $j < $i + 7; $j++) {
+                for ($j = $i + 1; $j < $i + 8; $j++) {
                     $potEmail = trimCharacters($cvArrText[$j]);
                     if (isValidEmail($potEmail)) {
                         $cvData['email'] = $potEmail;
@@ -117,10 +130,12 @@ function parseCVArrText($cvArrText, $cvLang,$deepSearch = false)
                 break;
             case 'телефон':
             case 'телефонен номер':
+            case 'phone':
+            case 'phone number':
                 if ($currSection) {
                     $cvData[$currSection] .= $currTrimmed . ' ';
                 }
-                for ($j = $i + 1; $j < $i + 7; $j++) {
+                for ($j = $i + 1; $j < $i + 8; $j++) {
                     $potPhone = trimCharacters($cvArrText[$j]);
                     if (isValidPhoneNumber($potPhone)) {
                         $cvData['phone_num'] = $potPhone;
@@ -131,10 +146,15 @@ function parseCVArrText($cvArrText, $cvLang,$deepSearch = false)
             case 'местожителство':
             case 'адрес':
             case 'място на живеене':
+            case 'address':
+            case 'location':
+            case 'home address:':
+            case 'current address':
+            case 'residence':
                 if ($currSection) {
                     $cvData[$currSection] .= $currTrimmed . ' ';
                 }
-                for ($j = $i + 1; $j < $i + 7; $j++) {
+                for ($j = $i + 1; $j < $i + 8; $j++) {
                     $potAddress = trimCharacters($cvArrText[$j]);
                     if (isValidAddress($potAddress)) {
                         $cvData['residence'] = $potAddress;
@@ -174,25 +194,36 @@ function parseCVArrText($cvArrText, $cvLang,$deepSearch = false)
 
                 switch ($currTrimmedToLower) {
                     case 'лична информация':
+                    case 'лични данни':
                     case 'personal info':
+                    case 'personal information':
                         $sectionFound = true;
                         break;
                     case 'умения':
                     case 'лични умения':
                     case 'лични умения и компетенции':
+                    case 'skills':
+                    case 'personal skills':
+                    case 'personal skills and competences':
                         $sectionFound = true;
                         break;
                     case 'опит':
                     case 'професионален опит':
                     case 'трудов стаж':
+                    case 'work experience':
+                    case 'working experience':
                         $sectionFound = true;
                         break;
                     case 'образование':
                     case 'образование и обучение':
+                    case 'education':
+                    case 'education and training':
                         $sectionFound = true;
                         break;
                     case 'допълнителни квалификации':
                     case 'допълнителна информация':
+                    case 'additional info':
+                    case 'additional information':
                         $sectionFound = true;
                         break;
                     default:
@@ -245,7 +276,7 @@ function parseCVArrText($cvArrText, $cvLang,$deepSearch = false)
 
             //check for phone number if the phone element is not set
             if (!$cvData['phone_num']) {
-                if(isValidPhoneNumber($currTrimmed)) {
+                if (isValidPhoneNumber($currTrimmed)) {
                     $cvData['phone_num'] = $currTrimmed;
                     $i++;
                     continue;

@@ -35,7 +35,7 @@ function extractTextArrDoc($filePath, $fileName)
     }
 }
 
-function parseCVArrText($cvArrText)
+function parseCVArrText($cvArrText, $deepSearch = false)
 {
     $cvData = [
         'personal_information' => '',
@@ -72,6 +72,7 @@ function parseCVArrText($cvArrText)
                 $currSection = 'skills';
                 break;
             case 'опит':
+            case 'професионален опит':
             case 'трудов стаж':
                 $currSection = 'experience';
                 break;
@@ -151,6 +152,56 @@ function parseCVArrText($cvArrText)
                 break;
         }
     }
+    if ($deepSearch) {
+        //go over the first part of the cv again and write it as personal info if there is no personal info set
+        if ($cvData['personal_information'] == '') {
+            $sectionFound = false;
+            for ($i = 0; $i < sizeof($cvArrText); $i++) {
+                $currEl = $cvArrText[$i];
+
+                //trim the curr from special characters at beggining and end
+                $currTrimmed = preg_replace('/^[^\wА-Яа-я]+/u', '', $currEl);
+                $currTrimmed = preg_replace('/[^\wА-Яа-я]+$/u', '', $currTrimmed);
+
+                $currTrimmedToLower = mb_strtolower($currTrimmed, 'UTF-8');
+
+                switch ($currTrimmedToLower) {
+                    case 'лична информация':
+                    case 'personal info':
+                        $sectionFound = true;
+                        break;
+                    case 'умения':
+                    case 'лични умения':
+                    case 'лични умения и компетенции':
+                        $sectionFound = true;
+                        break;
+                    case 'опит':
+                    case 'професионален опит':
+                    case 'трудов стаж':
+                        $sectionFound = true;
+                        break;
+                    case 'образование':
+                    case 'образование и обучение':
+                        $sectionFound = true;
+                        break;
+                    case 'допълнителни квалификации':
+                    case 'допълнителна информация':
+                        $sectionFound = true;
+                        break;
+                    default:
+                        if ($currSection) {
+                            $cvData['personal_information'] .= $currTrimmed . ' ';
+                        }
+                        break;
+                }
+
+                //Stop iterating if a section is found
+                if ($sectionFound)
+                    break;
+            }
+        }
+    }
+
     echo json_encode($cvData);
     //return $cvData;
 }

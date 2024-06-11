@@ -22,7 +22,7 @@ function is_word_wiktionary($word, $lang)
 
     return false;
 }
-function isHumanName($string)
+function isHumanName($string, $lang)
 {
     $wordToLower = mb_strtolower($string, 'UTF-8');
 
@@ -60,7 +60,7 @@ function isHumanName($string)
     }
 
      //if its a word its not a name
-     if (is_word_wiktionary($string, 'bg')) {
+     if (is_word_wiktionary($string, $lang)) {
         return false;
     }
 

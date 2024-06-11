@@ -7,8 +7,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $responseArr = extractTextArrDoc($filePath, $fileName);
         //print_r($responseArr);
-        $cvLang =  determineLanguage($responseArr, 3);
-        parseCVArrText($responseArr, true);
+        $cvLang = determineLanguage($responseArr, 3);
+        parseCVArrText($responseArr, 'bg', true);
 
     } else {
         echo 'No file uploaded.';

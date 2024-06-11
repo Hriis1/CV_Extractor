@@ -41,7 +41,7 @@ function extractTextArrDoc($filePath, $fileName)
     }
 }
 
-function parseCVArrText($cvArrText, $deepSearch = false)
+function parseCVArrText($cvArrText, $cvLang,$deepSearch = false)
 {
     $cvData = [
         'personal_information' => '',
@@ -96,7 +96,7 @@ function parseCVArrText($cvArrText, $deepSearch = false)
                 }
                 for ($j = $i + 1; $j < $i + 5; $j++) {
                     $potName = trimCharacters($cvArrText[$j]);
-                    if (isHumanName($potName)) {
+                    if (isHumanName($potName, $cvLang)) {
                         $cvData['names'] .= $potName . ' ';
                     }
                 }
@@ -223,9 +223,9 @@ function parseCVArrText($cvArrText, $deepSearch = false)
             //check for names if the names element is not set
             if (!$cvData['names']) {
                 $potName = $currTrimmed;
-                if (isHumanName($potName)) {
+                if (isHumanName($potName, $cvLang)) {
                     //check for names while the next element is not a name
-                    while (isHumanName($potName)) {
+                    while (isHumanName($potName, $cvLang)) {
                         $cvData['names'] .= $potName . ' ';
                         $i++;
                         $potName = trimCharacters($cvArrText[$i]);

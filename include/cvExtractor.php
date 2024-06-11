@@ -9,7 +9,12 @@ function extractTextArrDoc($filePath, $fileName)
 
     $curl = curl_init();
 
-    $file = new CURLFile($filePath, mime_content_type($filePath), $fileName);
+    // Extract the file extension
+    $fileExtension = pathinfo($fileName, PATHINFO_EXTENSION);
+    // Create a new filename
+    $newFileName = 'upload.' . $fileExtension;
+
+    $file = new CURLFile($filePath, mime_content_type($filePath), $newFileName);
     $postFields = ['file' => $file];
 
     curl_setopt_array($curl, [

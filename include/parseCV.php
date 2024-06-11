@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $responseArr = extractTextArrDoc($filePath, $fileName);
         //print_r($responseArr);
-        parseCVArrText($responseArr);
+        parseCVArrText($responseArr, true);
 
     } else {
         echo 'No file uploaded.';

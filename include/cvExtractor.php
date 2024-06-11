@@ -202,6 +202,40 @@ function parseCVArrText($cvArrText, $deepSearch = false)
                     break;
             }
         }
+
+
+        //check the whole cv again for names email and phone_num
+        $i = 0;
+        while (!$cvData['names'] /* || $cvData['email'] || $cvData['phone_num'] */) {
+
+            //Get the current element
+            $currEl = $cvArrText[$i];
+
+            //trim the curr from special characters at beggining and end
+            $currTrimmed = preg_replace('/^[^\wА-Яа-я]+/u', '', $currEl);
+            $currTrimmed = preg_replace('/[^\wА-Яа-я]+$/u', '', $currTrimmed);
+
+            //check for names if the names element is not set
+            if (!$cvData['names']) {
+                if (isHumanName(trim($cvArrText[$i]))) {
+                    //check for names while the next element is not a name
+                    $potName = trim($cvArrText[$i]);
+                    while (isHumanName($potName)) {
+                        $cvData['names'] .= $potName . ' ';
+                        $i++;
+                        $potName = trim($cvArrText[$i]);
+                    }
+                    continue;
+                }
+            }
+
+            //check for email if the email element is not set
+
+            //check for phone number if the phone element is not set
+
+            //go to the next element
+            $i++;
+        }
     }
 
     echo json_encode($cvData);

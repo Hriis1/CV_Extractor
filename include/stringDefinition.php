@@ -1,6 +1,7 @@
 <?php
 
-function is_word_wiktionary($word, $lang) {
+function is_word_wiktionary($word, $lang)
+{
     //word to lower case
     $word = mb_strtolower($word, 'UTF-8');
     // Construct the URL for the Wiktionary API
@@ -24,19 +25,45 @@ function is_word_wiktionary($word, $lang) {
 function isHumanName($string)
 {
     $wordToLower = mb_strtolower($string, 'UTF-8');
-    //if its a word its not a name
-    if(is_word_wiktionary($string, 'bg')) {
-        return false;
-    }
+
+    //additional words not in the dictionary and countries 
     $additionalWords = [
-        'телефон', 'телефони'
+        //Words
+        'телефон', 'телефони',
+
+        //Countries
+        'българия','bulgaria',
+        'америка','america',
+        'сащ', 'usa',
+        'германия', 'germany',
+        'франция', 'france',
+        'италия', 'italy',
+        'испания', 'spain',
+        'португалия', 'portugal',
+        'гърция', 'greece',
+        'турция', 'turkey',
+        'русия', 'russia',
+        'китай', 'china',
+        'япония', 'japan',
+        'индия', 'india',
+        'бразилия', 'brazil',
+        'мексико', 'mexico',
+        'канада', 'canada',
+        'австралия', 'australia',
+        'аржентина', 'argentina',
+        'египет', 'egypt'
     ];
 
     //if its in the additional words
-    if(in_array($wordToLower, $additionalWords)) {
+    if (in_array($wordToLower, $additionalWords)) {
         return false;
     }
-    
+
+     //if its a word its not a name
+     if (is_word_wiktionary($string, 'bg')) {
+        return false;
+    }
+
     // Define common patterns that could indicate a human name
     // Including common endings for names and surnames in Cyrillic and Latin scripts
     $namePatterns = [
@@ -54,14 +81,16 @@ function isHumanName($string)
     return false;
 }
 
-function isValidEmail($email) {
+function isValidEmail($email)
+{
     return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
 }
 
-function isValidPhoneNumber($phone) {
+function isValidPhoneNumber($phone)
+{
     // Remove spaces, dashes, and parentheses from the phone number
     $normalizedPhone = preg_replace('/[\s\-()]+/', '', $phone);
-    
+
     // Define a regular expression pattern for phone numbers
     $pattern = '/^(\+359|0)?8[7-9][0-9]{7}$/';
 
@@ -69,9 +98,10 @@ function isValidPhoneNumber($phone) {
     return preg_match($pattern, $normalizedPhone) === 1;
 }
 
-function isValidAddress($string) {
+function isValidAddress($string)
+{
 
-    if(strlen($string) >= 50) {
+    if (strlen($string) >= 50) {
         return false;
     }
     // Define common patterns that could indicate an address

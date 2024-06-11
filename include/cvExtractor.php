@@ -47,7 +47,7 @@ function parseCVArrText($cvArrText)
         'email' => '',
         'phone_num' => '',
         'residence' => '',
-        'driver_licence' => 'no'
+        'driver_licence' => 'не'
     ];
 
     $currSection = '';
@@ -142,7 +142,7 @@ function parseCVArrText($cvArrText)
                 if ($currSection) {
                     $cvData[$currSection] .= $currTrimmed . ' ';
                 }
-                $cvData['residence'] = 'да';
+                $cvData['driver_licence'] = 'да';
                 break;
             default:
                 if ($currSection) {

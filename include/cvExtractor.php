@@ -135,6 +135,8 @@ function parseCVArrText($cvArrText)
                 }
                 break;
             case 'шофьорска книжка':
+            case 'свидетелство за управление на мпс':
+            case 'управление на мпс':
             case 'driver licence':
             case 'drivers licence':
                 if ($currSection) {

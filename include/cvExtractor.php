@@ -207,7 +207,7 @@ function parseCVArrText($cvArrText, $deepSearch = false)
 
         //check the whole cv again for names email and phone_num
         $i = 0;
-        while ($i < sizeof($cvArrText) && (!$cvData['names'] /* || !$cvData['email'] */) /* || $cvData['phone_num'] */) {
+        while ($i < sizeof($cvArrText) && (!$cvData['names'] || !$cvData['email'] || $cvData['phone_num'])) {
 
             //Get the current element
             $currEl = $cvArrText[$i];
@@ -230,8 +230,8 @@ function parseCVArrText($cvArrText, $deepSearch = false)
             }
 
             //check for email if the email element is not set
-            if(!$cvData['email']) {
-                if(isValidEmail($currTrimmed)) {
+            if (!$cvData['email']) {
+                if (isValidEmail($currTrimmed)) {
                     $cvData['email'] = $currTrimmed;
                     $i++;
                     continue;
@@ -239,6 +239,13 @@ function parseCVArrText($cvArrText, $deepSearch = false)
             }
 
             //check for phone number if the phone element is not set
+            if (!$cvData['phone_num']) {
+                if(isValidPhoneNumber($currTrimmed)) {
+                    $cvData['phone_num'] = $currTrimmed;
+                    $i++;
+                    continue;
+                }
+            }
 
             //go to the next element
             $i++;

@@ -166,6 +166,7 @@ function parseCVArrText($cvArrText, $cvLang, $deepSearch = false)
             case 'управление на мпс':
             case 'driver licence':
             case 'drivers licence':
+            case 'driving licence':
                 if ($currSection) {
                     $cvData[$currSection] .= $currTrimmed . ' ';
                 }

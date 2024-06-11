@@ -46,7 +46,8 @@ function parseCVArrText($cvArrText)
         'names' => '',
         'email' => '',
         'phone_num' => '',
-        'residence' => ''
+        'residence' => '',
+        'driver_licence' => 'no'
     ];
 
     $currSection = '';
@@ -132,6 +133,14 @@ function parseCVArrText($cvArrText)
                         $cvData['residence'] = $potAddress;
                     }
                 }
+                break;
+            case 'шофьорска книжка':
+            case 'driver licence':
+            case 'drivers licence':
+                if ($currSection) {
+                    $cvData[$currSection] .= $currTrimmed . ' ';
+                }
+                $cvData['residence'] = 'да';
                 break;
             default:
                 if ($currSection) {

@@ -90,8 +90,9 @@ function parseCVArrText($cvArrText, $deepSearch = false)
                     $cvData[$currSection] .= $currTrimmed . ' ';
                 }
                 for ($j = $i + 1; $j < $i + 5; $j++) {
-                    if (isHumanName(trim($cvArrText[$j]))) {
-                        $cvData['names'] .= trim($cvArrText[$j]) . ' ';
+                    $potName = trimCharacters($cvArrText[$j]);
+                    if (isHumanName($potName)) {
+                        $cvData['names'] .= $potName . ' ';
                     }
                 }
                 break;
@@ -102,7 +103,7 @@ function parseCVArrText($cvArrText, $deepSearch = false)
                     $cvData[$currSection] .= $currTrimmed . ' ';
                 }
                 for ($j = $i + 1; $j < $i + 7; $j++) {
-                    $potEmail = trim($cvArrText[$j]);
+                    $potEmail = trimCharacters($cvArrText[$j]);
                     if (isValidEmail($potEmail)) {
                         $cvData['email'] = $potEmail;
                         break;
@@ -115,7 +116,7 @@ function parseCVArrText($cvArrText, $deepSearch = false)
                     $cvData[$currSection] .= $currTrimmed . ' ';
                 }
                 for ($j = $i + 1; $j < $i + 7; $j++) {
-                    $potPhone = trim($cvArrText[$j]);
+                    $potPhone = trimCharacters($cvArrText[$j]);
                     if (isValidPhoneNumber($potPhone)) {
                         $cvData['phone_num'] = $potPhone;
                         break;
@@ -129,7 +130,7 @@ function parseCVArrText($cvArrText, $deepSearch = false)
                     $cvData[$currSection] .= $currTrimmed . ' ';
                 }
                 for ($j = $i + 1; $j < $i + 7; $j++) {
-                    $potAddress = trim($cvArrText[$j]);
+                    $potAddress = trimCharacters($cvArrText[$j]);
                     if (isValidAddress($potAddress)) {
                         $cvData['residence'] = $potAddress;
                     }
@@ -206,14 +207,13 @@ function parseCVArrText($cvArrText, $deepSearch = false)
 
         //check the whole cv again for names email and phone_num
         $i = 0;
-        while ($i < sizeof($cvArrText) && (!$cvData['names'] || $cvData['email']) /* || $cvData['phone_num'] */) {
+        while ($i < sizeof($cvArrText) && (!$cvData['names'] /* || !$cvData['email'] */) /* || $cvData['phone_num'] */) {
 
             //Get the current element
             $currEl = $cvArrText[$i];
 
             //trim the curr from special characters at beggining and end
-            $currTrimmed = preg_replace('/^[^\wА-Яа-я]+/u', '', $currEl);
-            $currTrimmed = preg_replace('/[^\wА-Яа-я]+$/u', '', $currTrimmed);
+            $currTrimmed = trimCharacters($currEl);
 
             //check for names if the names element is not set
             if (!$cvData['names']) {
@@ -223,7 +223,7 @@ function parseCVArrText($cvArrText, $deepSearch = false)
                     while (isHumanName($potName)) {
                         $cvData['names'] .= $potName . ' ';
                         $i++;
-                        $potName = trim($cvArrText[$i]);
+                        $potName = trimCharacters($cvArrText[$i]);
                     }
                     continue;
                 }

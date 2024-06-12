@@ -201,68 +201,71 @@ function parseCVArrText($cvArrText, $cvLang, $deepSearch = false)
 
     if ($deepSearch) {
         //go over the first part of the cv again and write it as personal info if there is no personal info set
-        if ($cvData['personal_information'] == '') {
-            $sectionFound = false;
-            for ($i = 0; $i < sizeof($cvArrText); $i++) {
-                $currEl = $cvArrText[$i];
 
-                //trim the curr from special characters at beggining and end
-                $currTrimmed = preg_replace('/^[^\wА-Яа-я]+/u', '', $currEl);
-                $currTrimmed = preg_replace('/[^\wА-Яа-я]+$/u', '', $currTrimmed);
+        //if personal_information has been set dont bother with it
+        $currSection = $cvData['personal_information'];
+        for ($i = 0; $i < sizeof($cvArrText); $i++) {
+            $currEl = $cvArrText[$i];
 
-                $currTrimmedToLower = mb_strtolower($currTrimmed, 'UTF-8');
+            //trim the curr from special characters at beggining and end
+            $currTrimmed = trimCharacters($currEl);
 
+            $currTrimmedToLower = mb_strtolower($currTrimmed, 'UTF-8');
+
+            //if a section has not yet been found
+            if (!$currSection) {
                 switch ($currTrimmedToLower) {
                     case 'лична информация':
                     case 'лични данни':
                     case 'personal info':
                     case 'personal information':
-                        $sectionFound = true;
+                        $currSection = 'personal_information';
                         break;
                     case 'умения':
                     case 'лични умения':
                     case 'лични умения и компетенции':
+                    case 'лични умения и':
                     case 'skills':
                     case 'personal skills':
+                    case 'personal skills and':
                     case 'personal skills and competences':
-                        $sectionFound = true;
+                        $currSection = 'skills';
                         break;
                     case 'опит':
                     case 'професионален опит':
                     case 'трудов стаж':
                     case 'work experience':
                     case 'working experience':
-                        $sectionFound = true;
+                        $currSection = 'experience';
                         break;
                     case 'образование':
                     case 'образование и обучение':
                     case 'education':
                     case 'education and training':
-                        $sectionFound = true;
+                    case 'education and':
+                        $currSection = 'education';
                         break;
                     case 'допълнителни квалификации':
                     case 'допълнителна информация':
                     case 'additional info':
                     case 'additional information':
-                        $sectionFound = true;
+                        $currSection = 'additional_info';
                         break;
                     default:
-                        if ($currSection) {
-                            //Add to personal info
-                            $cvData['personal_information'] .= $currTrimmed . ' ';
-                        }
+                        //Add to personal info
+                        $cvData['personal_information'] .= $currTrimmed . ' ';
                         break;
                 }
-
-                //Stop iterating if a section is found
-                if ($sectionFound)
-                    break;
             }
+
+            //Stop iterating if a section is found
+            if ($currSection)
+                break;
         }
 
 
         //check the whole cv again for names email and phone_num
-        $i = 0;
+        /* $i = 0;
         while ($i < sizeof($cvArrText) && (!$cvData['names'] || !$cvData['email'] || $cvData['phone_num'])) {
 
             //Get the current element
@@ -305,7 +308,7 @@ function parseCVArrText($cvArrText, $cvLang, $deepSearch = false)
 
             //go to the next element
             $i++;
-        }
+        } */
     }
 
     echo json_encode($cvData);

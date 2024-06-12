@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $responseArr = extractTextArrDoc($filePath, $fileName);
         $cvLang = determineLanguage($responseArr, 3);
-        parseCVArrText($responseArr, $cvLang, false);
+        parseCVArrText($responseArr, $cvLang, true);
 
         //print_r($responseArr);
 

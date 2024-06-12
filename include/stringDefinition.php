@@ -1,6 +1,7 @@
 <?php
 
-function containsLetters($str) {
+function containsLetters($str)
+{
     return preg_match('/[a-zA-ZА-Яа-яЁё]/u', $str);
 }
 function is_word_wiktionary($word, $lang)
@@ -25,36 +26,57 @@ function is_word_wiktionary($word, $lang)
 
     return false;
 }
-function isHumanName($string, $lang)
+function isHumanName($string, $lang, bool $acceptFullyCapitalized = false)
 {
     $wordToLower = mb_strtolower($string, 'UTF-8');
 
     //additional words not in the dictionary and countries 
     $additionalWords = [
         //Words
-        'телефон', 'телефони',
+        'телефон',
+        'телефони',
 
         //Countries
-        'българия','bulgaria',
-        'америка','america',
-        'сащ', 'usa',
-        'германия', 'germany',
-        'франция', 'france',
-        'италия', 'italy',
-        'испания', 'spain',
-        'португалия', 'portugal',
-        'гърция', 'greece',
-        'турция', 'turkey',
-        'русия', 'russia',
-        'китай', 'china',
-        'япония', 'japan',
-        'индия', 'india',
-        'бразилия', 'brazil',
-        'мексико', 'mexico',
-        'канада', 'canada',
-        'австралия', 'australia',
-        'аржентина', 'argentina',
-        'египет', 'egypt'
+        'българия',
+        'bulgaria',
+        'америка',
+        'america',
+        'сащ',
+        'usa',
+        'германия',
+        'germany',
+        'франция',
+        'france',
+        'италия',
+        'italy',
+        'испания',
+        'spain',
+        'португалия',
+        'portugal',
+        'гърция',
+        'greece',
+        'турция',
+        'turkey',
+        'русия',
+        'russia',
+        'китай',
+        'china',
+        'япония',
+        'japan',
+        'индия',
+        'india',
+        'бразилия',
+        'brazil',
+        'мексико',
+        'mexico',
+        'канада',
+        'canada',
+        'австралия',
+        'australia',
+        'аржентина',
+        'argentina',
+        'египет',
+        'egypt'
     ];
 
     //if its in the additional words
@@ -62,8 +84,8 @@ function isHumanName($string, $lang)
         return false;
     }
 
-     //if its a word its not a name
-     if (is_word_wiktionary($string, $lang)) {
+    //if its a word its not a name
+    if (is_word_wiktionary($string, $lang)) {
         return false;
     }
 
@@ -73,6 +95,11 @@ function isHumanName($string, $lang)
         '/^[А-ЯЁ][а-яё]+(?:[ \-][А-ЯЁ][а-яё]+)*$/u', // Cyrillic names (e.g., Атанас, Атанасов, Атанас Атанасов)
         '/^[A-Z][a-z]+(?:[ \-][A-Z][a-z]+)*$/',      // Latin names (e.g., John, Smith, John Smith)
     ];
+
+    if ($acceptFullyCapitalized) {
+        $namePatterns[] = '/^[А-ЯЁ]+(?:[ \-][А-ЯЁ]+)*$/u'; // Fully capitalized Cyrillic names (e.g., АТАНАС, АТАНАС АТАНАСОВ)
+        $namePatterns[] = '/^[A-Z]+(?:[ \-][A-Z]+)*$/';    // Fully capitalized Latin names (e.g., JOHN, SMITH, JOHN SMITH)
+    }
 
     // Check if the string matches any of the name patterns
     foreach ($namePatterns as $pattern) {
@@ -92,7 +119,7 @@ function isValidEmail($email)
 function isValidPhoneNumber($phone)
 {
     //if it contains letters its not a phone number
-    if(containsLetters($phone))
+    if (containsLetters($phone))
         return false;
 
     // Remove spaces, dashes, and parentheses from the phone number
@@ -114,7 +141,7 @@ function isValidAddress($string)
     }
 
     //if string does not contain letters its not an address
-    if(!containsLetters($string)) {
+    if (!containsLetters($string)) {
         return false;
     }
 

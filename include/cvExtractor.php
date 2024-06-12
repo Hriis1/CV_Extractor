@@ -132,9 +132,10 @@ function parseCVArrText($cvArrText, $cvLang, SearchType $searchType = SearchType
                 if ($currSection) {
                     $cvData[$currSection] .= $currTrimmed . ' ';
                 }
+                $acceptFullCaps = $i+1 <= 10;
                 for ($j = $i + 1; $j < $i + 5; $j++) {
                     $potName = trimCharacters($cvArrText[$j]);
-                    if (isHumanName($potName, $cvLang)) {
+                    if (isHumanName($potName, $cvLang, $acceptFullCaps)) {
                         $cvData['names'] .= $potName . ' ';
                     }
                 }
@@ -285,10 +286,11 @@ function parseCVArrText($cvArrText, $cvLang, SearchType $searchType = SearchType
                 //check for names if the names element is not set
                 if (!$cvData['names']) {
                     $potName = $currTrimmed;
-                    if (isHumanName($potName, $cvLang)) {
+                    $acceptFullCaps = $i+1 <= 10;
+                    if (isHumanName($potName, $cvLang, $acceptFullCaps)) {
                         $j = $i;
                         //check for names while the next element is not a name
-                        while (isHumanName($potName, $cvLang)) {
+                        while (isHumanName($potName, $cvLang, $acceptFullCaps)) {
                             $cvData['names'] .= $potName . ' ';
                             $j++;
                             $potName = trimCharacters($cvArrText[$j]);

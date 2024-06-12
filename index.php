@@ -8,7 +8,7 @@
 <body>
     <form action="include/parseCV.php" method="post" enctype="multipart/form-data">
         <input type="file" name="file" id="fileInput" required>
-        <button type="submit">Upload and Extract Text</button>
+        <button type="submit">Upload and Parse CV</button>
     </form>
 </body>
 </html>

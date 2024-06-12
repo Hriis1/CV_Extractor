@@ -36,7 +36,7 @@ function hasOnlySameValues(array $arr): bool {
     return count($uniqueValues) === 1;
 }
 
-function determineLanguage(array $cvArr, int $precision) {
+function determineLanguage(array $cvArr, int $precision) : string {
     $langArr = [];
     for ($i=0; $i < $precision; $i++) {
         //Gen a random idx

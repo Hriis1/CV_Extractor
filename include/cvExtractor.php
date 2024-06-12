@@ -315,53 +315,6 @@ function parseCVArrText($cvArrText, $cvLang, SearchType $searchType = SearchType
             if ($breakCondition())
                 break;
         }
-
-
-        //check the whole cv again for names email and phone_num
-        /* $i = 0;
-        while ($i < sizeof($cvArrText) && (!$cvData['names'] || !$cvData['email'] || !$cvData['phone_num'])) {
-
-            //Get the current element
-            $currEl = $cvArrText[$i];
-
-            //trim the curr from special characters at beggining and end
-            $currTrimmed = trimCharacters($currEl);
-
-            //check for names if the names element is not set
-            if (!$cvData['names']) {
-                $potName = $currTrimmed;
-                if (isHumanName($potName, $cvLang)) {
-                    //check for names while the next element is not a name
-                    while (isHumanName($potName, $cvLang)) {
-                        $cvData['names'] .= $potName . ' ';
-                        $i++;
-                        $potName = trimCharacters($cvArrText[$i]);
-                    }
-                    continue;
-                }
-            }
-
-            //check for email if the email element is not set
-            if (!$cvData['email']) {
-                if (isValidEmail($currTrimmed)) {
-                    $cvData['email'] = $currTrimmed;
-                    $i++;
-                    continue;
-                }
-            }
-
-            //check for phone number if the phone element is not set
-            if (!$cvData['phone_num']) {
-                if (isValidPhoneNumber($currEl)) {
-                    $cvData['phone_num'] = $currTrimmed;
-                    $i++;
-                    continue;
-                }
-            }
-
-            //go to the next element
-            $i++;
-        } */
     }
 
     echo json_encode($cvData);

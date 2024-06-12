@@ -204,6 +204,7 @@ function parseCVArrText($cvArrText, $cvLang, $deepSearch = false)
 
         //if personal_information has been set dont bother with it
         $currSection = $cvData['personal_information'];
+
         for ($i = 0; $i < sizeof($cvArrText); $i++) {
             $currEl = $cvArrText[$i];
 
@@ -258,15 +259,43 @@ function parseCVArrText($cvArrText, $cvLang, $deepSearch = false)
                 }
             }
 
-            //Stop iterating if a section is found
-            if ($currSection)
+            //check for names if the names element is not set
+            if (!$cvData['names']) {
+                $potName = $currTrimmed;
+                if (isHumanName($potName, $cvLang)) {
+                    $j = $i;
+                    //check for names while the next element is not a name
+                    while (isHumanName($potName, $cvLang)) {
+                        $cvData['names'] .= $potName . ' ';
+                        $j++;
+                        $potName = trimCharacters($cvArrText[$j]);
+                    }
+                    continue;
+                }
+            }
+            //check for email if the email element is not set
+            if (!$cvData['email']) {
+                if (isValidEmail($currTrimmed)) {
+                    $cvData['email'] = $currTrimmed;
+                    continue;
+                }
+            }
+            //check for phone number if the phone element is not set
+            if (!$cvData['phone_num']) {
+                if (isValidPhoneNumber($currEl)) {
+                    $cvData['phone_num'] = $currTrimmed;
+                }
+            }
+
+            //Stop iterating if everything has been found
+            if ($currSection && $cvData['names'] && $cvData['email'] && $cvData['phone_num'])
                 break;
         }
 
 
         //check the whole cv again for names email and phone_num
         /* $i = 0;
-        while ($i < sizeof($cvArrText) && (!$cvData['names'] || !$cvData['email'] || $cvData['phone_num'])) {
+        while ($i < sizeof($cvArrText) && (!$cvData['names'] || !$cvData['email'] || !$cvData['phone_num'])) {
 
             //Get the current element
             $currEl = $cvArrText[$i];

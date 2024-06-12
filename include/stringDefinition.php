@@ -91,8 +91,12 @@ function isValidEmail($email)
 
 function isValidPhoneNumber($phone)
 {
+    //if it contains letters its not a phone number
+    if(containsLetters($phone))
+        return false;
+
     // Remove spaces, dashes, and parentheses from the phone number
-    $normalizedPhone = preg_replace('/[\s\-()]+/', '', $phone);
+    $normalizedPhone = preg_replace('/[^0-9+]+/', '', $phone);
 
     // Define a regular expression pattern for phone numbers
     $pattern = '/^(\+359|0)?8[7-9][0-9]{7}$/';

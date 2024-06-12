@@ -76,8 +76,10 @@ function parseCVArrText($cvArrText, $cvLang, $deepSearch = false)
             case 'умения':
             case 'лични умения':
             case 'лични умения и компетенции':
+            case 'лични умения и':
             case 'skills':
             case 'personal skills':
+            case 'personal skills and':
             case 'personal skills and competences':
                 $currSection = 'skills';
                 break;
@@ -94,6 +96,21 @@ function parseCVArrText($cvArrText, $cvLang, $deepSearch = false)
             case 'education and training':
                 $currSection = 'education';
                 break;
+            case 'education and':
+                //If curr el is 'education and' and next is 'training' the section should be education and advance iterator by 2 not 1
+                $nextEl = mb_strtolower(trimCharacters($cvArrText[$i + 1]), 'UTF-8');
+                if ($nextEl == 'training') {
+                    $currSection = 'education';
+                    $i++;
+                    break;
+                } else {
+                    //if next is not training just do the default
+                    if ($currSection) {
+                        $cvData[$currSection] .= $currTrimmed . ' ';
+                    }
+                    break;
+                }
+
             case 'допълнителни квалификации':
             case 'допълнителна информация':
             case 'additional info':

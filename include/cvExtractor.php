@@ -2,6 +2,14 @@
 require_once 'stringDefinition.php';
 require_once 'utils.php';
 
+enum SearchType: int
+{
+    case Shallow = 0;
+    case Personal_Info = 2;
+    case Name_Email_Phone = 3;
+    case Deep = 4;
+}
+
 function extractTextArrDoc($filePath, $fileName)
 {
     $apiKey = 'tRZEvaZOSdFGKqAjJkHGxPTBiHfHquHsYFaPLcYVPvweZPQXho';
@@ -41,7 +49,7 @@ function extractTextArrDoc($filePath, $fileName)
     }
 }
 
-function parseCVArrText($cvArrText, $cvLang, $deepSearch = false)
+function parseCVArrText($cvArrText, $cvLang, SearchType $searchType = SearchType::Shallow)
 {
     $cvData = [
         'personal_information' => '',
@@ -199,8 +207,19 @@ function parseCVArrText($cvArrText, $cvLang, $deepSearch = false)
         }
     }
 
-    if ($deepSearch) {
-        //go over the first part of the cv again and write it as personal info if there is no personal info set
+    if ($searchType != SearchType::Shallow) {
+
+        //Determine break condition
+        $breakCondition = function () use (&$searchType, &$currSection, &$cvData) {
+            if ($searchType == SearchType::Personal_Info) {
+                return $currSection;
+            } elseif ($searchType == SearchType::Name_Email_Phone) {
+                return $cvData['names'] && $cvData['email'] && $cvData['phone_num'];
+            } elseif ($searchType == SearchType::Deep) {
+                return $currSection && $cvData['names'] && $cvData['email'] && $cvData['phone_num'];
+            }
+            return true;
+        };
 
         //if personal_information has been set dont bother with it
         $currSection = $cvData['personal_information'];
@@ -213,82 +232,87 @@ function parseCVArrText($cvArrText, $cvLang, $deepSearch = false)
 
             $currTrimmedToLower = mb_strtolower($currTrimmed, 'UTF-8');
 
-            //if a section has not yet been found
-            if (!$currSection) {
-                switch ($currTrimmedToLower) {
-                    case 'лична информация':
-                    case 'лични данни':
-                    case 'personal info':
-                    case 'personal information':
-                        $currSection = 'personal_information';
-                        break;
-                    case 'умения':
-                    case 'лични умения':
-                    case 'лични умения и компетенции':
-                    case 'лични умения и':
-                    case 'skills':
-                    case 'personal skills':
-                    case 'personal skills and':
-                    case 'personal skills and competences':
-                        $currSection = 'skills';
-                        break;
-                    case 'опит':
-                    case 'професионален опит':
-                    case 'трудов стаж':
-                    case 'work experience':
-                    case 'working experience':
-                        $currSection = 'experience';
-                        break;
-                    case 'образование':
-                    case 'образование и обучение':
-                    case 'education':
-                    case 'education and training':
-                    case 'education and':
-                        $currSection = 'education';
-                        break;
-                    case 'допълнителни квалификации':
-                    case 'допълнителна информация':
-                    case 'additional info':
-                    case 'additional information':
-                        $currSection = 'additional_info';
-                        break;
-                    default:
-                        //Add to personal info
-                        $cvData['personal_information'] .= $currTrimmed . ' ';
-                        break;
+            //go over the first part of the cv again and write it as personal info if there is no personal info set
+            if ($searchType == SearchType::Personal_Info || $searchType == SearchType::Deep) {
+                //if a section has not yet been found
+                if (!$currSection) {
+                    switch ($currTrimmedToLower) {
+                        case 'лична информация':
+                        case 'лични данни':
+                        case 'personal info':
+                        case 'personal information':
+                            $currSection = 'personal_information';
+                            break;
+                        case 'умения':
+                        case 'лични умения':
+                        case 'лични умения и компетенции':
+                        case 'лични умения и':
+                        case 'skills':
+                        case 'personal skills':
+                        case 'personal skills and':
+                        case 'personal skills and competences':
+                            $currSection = 'skills';
+                            break;
+                        case 'опит':
+                        case 'професионален опит':
+                        case 'трудов стаж':
+                        case 'work experience':
+                        case 'working experience':
+                            $currSection = 'experience';
+                            break;
+                        case 'образование':
+                        case 'образование и обучение':
+                        case 'education':
+                        case 'education and training':
+                        case 'education and':
+                            $currSection = 'education';
+                            break;
+                        case 'допълнителни квалификации':
+                        case 'допълнителна информация':
+                        case 'additional info':
+                        case 'additional information':
+                            $currSection = 'additional_info';
+                            break;
+                        default:
+                            //Add to personal info
+                            $cvData['personal_information'] .= $currTrimmed . ' ';
+                            break;
+                    }
                 }
             }
 
-            //check for names if the names element is not set
-            if (!$cvData['names']) {
-                $potName = $currTrimmed;
-                if (isHumanName($potName, $cvLang)) {
-                    $j = $i;
-                    //check for names while the next element is not a name
-                    while (isHumanName($potName, $cvLang)) {
-                        $cvData['names'] .= $potName . ' ';
-                        $j++;
-                        $potName = trimCharacters($cvArrText[$j]);
+            if ($searchType == SearchType::Name_Email_Phone || $searchType == SearchType::Deep) {
+                //check for names if the names element is not set
+                if (!$cvData['names']) {
+                    $potName = $currTrimmed;
+                    if (isHumanName($potName, $cvLang)) {
+                        $j = $i;
+                        //check for names while the next element is not a name
+                        while (isHumanName($potName, $cvLang)) {
+                            $cvData['names'] .= $potName . ' ';
+                            $j++;
+                            $potName = trimCharacters($cvArrText[$j]);
+                        }
+                        continue;
                     }
-                    continue;
                 }
-            }
-            //check for email if the email element is not set
-            if (!$cvData['email']) {
-                if (isValidEmail($currTrimmed)) {
-                    $cvData['email'] = $currTrimmed;
-                    continue;
+                //check for email if the email element is not set
+                if (!$cvData['email']) {
+                    if (isValidEmail($currTrimmed)) {
+                        $cvData['email'] = $currTrimmed;
+                        continue;
+                    }
                 }
-            }
-            //check for phone number if the phone element is not set
-            if (!$cvData['phone_num']) {
-                if (isValidPhoneNumber($currEl)) {
-                    $cvData['phone_num'] = $currTrimmed;
+                //check for phone number if the phone element is not set
+                if (!$cvData['phone_num']) {
+                    if (isValidPhoneNumber($currEl)) {
+                        $cvData['phone_num'] = $currTrimmed;
+                    }
                 }
             }
 
             //Stop iterating if everything has been found
-            if ($currSection && $cvData['names'] && $cvData['email'] && $cvData['phone_num'])
+            if ($breakCondition())
                 break;
         }
 

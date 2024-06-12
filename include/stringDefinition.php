@@ -1,5 +1,8 @@
 <?php
 
+function containsLetters($str) {
+    return preg_match('/[a-zA-ZА-Яа-яЁё]/u', $str);
+}
 function is_word_wiktionary($word, $lang)
 {
     //word to lower case
@@ -101,12 +104,19 @@ function isValidPhoneNumber($phone)
 function isValidAddress($string)
 {
 
+    //if string is too large its not an address
     if (strlen($string) >= 50) {
         return false;
     }
+
+    //if string does not contain letters its not an address
+    if(!containsLetters($string)) {
+        return false;
+    }
+
     // Define common patterns that could indicate an address
     $addressPatterns = [
-        '/(ул\.|ж\.к\.|гр\.|пл\.|бул\.|обл\.|общ\.)/u', // Common address abbreviations in Bulgarian (e.g., ул., ж.к., гр., пл., бул., обл., общ.)
+        '/(ул\.|ul\.|ж\.к\.|zh\.k\.|гр\.|gr\.|пл\.|pl\.|бул\.|bul\.|обл\.|obl\.|общ\.|obsht\.|кв\.|kv\.)/u', // Common address abbreviations in Bulgarian (e.g., ул., ж.к., гр., пл., бул., обл., общ.)
         '/\b(street|st\.|avenue|ave\.|road|rd\.|city|town|zip|postal|code|place|plaza)\b/i', // Common address terms in English
         '/\b[0-9]{3,5}\b/', // Postal codes (typically 3 to 5 digits)
         '/\b\d{1,4}[A-Za-z]?\b/', // House numbers (e.g., 523A)

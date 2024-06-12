@@ -148,12 +148,14 @@ function parseCVArrText($cvArrText, $cvLang, $deepSearch = false)
             case 'телефон':
             case 'телефонен номер':
             case 'phone':
+            case 'telephone':
             case 'phone number':
+            case 'telephone number':
                 if ($currSection) {
                     $cvData[$currSection] .= $currTrimmed . ' ';
                 }
                 for ($j = $i + 1; $j < $i + 8; $j++) {
-                    $potPhone = trimCharacters($cvArrText[$j]);
+                    $potPhone = $cvArrText[$j];
                     if (isValidPhoneNumber($potPhone)) {
                         $cvData['phone_num'] = $potPhone;
                         break;
@@ -294,7 +296,7 @@ function parseCVArrText($cvArrText, $cvLang, $deepSearch = false)
 
             //check for phone number if the phone element is not set
             if (!$cvData['phone_num']) {
-                if (isValidPhoneNumber($currTrimmed)) {
+                if (isValidPhoneNumber($currEl)) {
                     $cvData['phone_num'] = $currTrimmed;
                     $i++;
                     continue;

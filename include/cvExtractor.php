@@ -4,9 +4,16 @@ require_once 'utils.php';
 
 enum SearchType: int
 {
+    //Fastest, looks once
     case Shallow = 0;
+
+    //Looks for personal info a 2nd time
     case Personal_Info = 2;
+
+    //Looks for name email and phone a 2nd time
     case Name_Email_Phone = 3;
+
+    //Slowest, looks for personal info and name, email, phone a 2nd time
     case Deep = 4;
 }
 
